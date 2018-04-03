@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>必应搜索</title>
+<style type="text/css">
+	body{background-color: #333;}
+	.nav{margin:0 auto; width:1300px;}
+	.nav ul{list-style:none;margin:0;padding:0;}
+	.nav ul li{float:left;padding:10px;}
+	.nav ul li a{color:#999; text-decoration:none;font-size:12px; font-weight:bold;}
+	a:hover {text-decoration: underline;}
+	.clearfix:after{display:block;clear:both;content:"";visibility:hidden;height:0px;}
+	.clearfix{zoom:1}
+	
+	.bg{position:relative;background-image: url(background.jpg);width: 1300px;height: 560px;margin: 0 auto;}
+	.search-box{position:absolute;top: 150px;left: 200px; }
+	.logo{background-image: url(logo.png);height: 53px;width: 107px; float: left;margin: -4px 18px 0 0;}
+	.search-form{float: left; background-color: #fff;padding:5px;}
+	.search-text{height:25px;line-height: 25px;float: left;width: 350px;border: 0;outline: none;}
+	.search-button{background-image: url(button-logo.png);width:29px;height:29px;float: left;border: 0;cursor: pointer;}
+	
+	.suggest{width:388px; background-color:#fff;position:absolute;border:1px solid #999;}
+	.suggest ul{list-style:none;display:block;margin:0;padding:0}
+	.suggest ul li {padding:3px;line-height:25px;font-size: 14px;color: #777;cursor: pointer;}
+	.suggest ul li:hover{background-color:#e5e5e5;text-decoration: underline;}
+</style>
+</head>
+
+<body>
+ <div class="nav">
+ <ul class="clearfix">
+	<li><a href="http://cn.bing.com/images/trending?form=Z9LH">图片</a></li>
+	<li><a href="http://cn.bing.com/videos/trending">视频</a></li>
+	<li><a href="http://cn.bing.com/dict/?FORM=HDRSC6">词典</a></li>
+	<li><a href="http://cn.bing.com/maps?q=&FORM=HDRSC7">地图</a></li>
+	<li><a href="http://cn.bing.com/academic?FORM=HDRSC4">学术</a></li>
+ </ul>
+ </div>
+ 
+ 
+ <div class="bg">
+ 	<div class="search-box">
+ 	    <div class="logo"></div>
+ 	
+	 	<form class="search-form" action="https://cn.bing.com/search" target="_blank" id="search-form">
+	 		<input type="text" class="search-text" name="q" id="search_input" autocomplete="off"/>
+	 		<input type="submit" class="search-button" value=""/>
+	 	</form>
+    </div>
+ </div>
+ 
+ 
+ <div class="suggest" id="search-suggest" style="display:none">
+				<ul id="search-result">
+				</ul>
+ </div>
+ 
+ <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+ <script>
+ $('#search_input').bind('keyup',function(){
+	var searchText=$('search_input').val();
+	// 需要修改域名满足ajax同源策略
+	$.get('http://api.bing.com/qsonhs.aspx?q='+searchText,function(d){
+		var d=d.AS.Results[0].Suggests;
+		var html='';
+		for(var i=0;i<d.length;i++){
+			html+='<li>'+d[i].Txt+'</li>'
+		}
+	$('#search-result').html(html);
+	$('#search-suggest').css({
+	    position:"absolute",
+	    top:$('#search-form').offset().top+$('#search-form').height()+10,
+	    left:$('#search-form').offset().left
+    }).show();
+	},'json')
+ });
+ $(document).bind('click',function(){
+	 $('#search-suggest').hide();
+ });
+ $(document).delegate('li','click',function(){
+	 var keyword=$(this).text();
+	location.herf='http://cn.bing.com/search?q='+keyword; 
+ });
+ 
+ </script>
+	 
+</body>
+</html>
